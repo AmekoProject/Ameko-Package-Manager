@@ -32,7 +32,10 @@ public class Example1 : HoloScript
     };
 
     /// <inheritdoc />
-    public override async Task<ExecutionResult> ExecuteAsync(string? methodName)
+    public override async Task<ExecutionResult> ExecuteAsync(
+        string? methodName,
+        ScriptArgs? args = null
+    )
     {
         if (string.IsNullOrEmpty(methodName))
         {

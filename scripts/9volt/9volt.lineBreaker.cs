@@ -82,7 +82,10 @@ public class LineBreaker : HoloScript
     }
 
     /// <inheritdoc />
-    public override async Task<ExecutionResult> ExecuteAsync(string? methodName)
+    public override async Task<ExecutionResult> ExecuteAsync(
+        string? methodName,
+        ScriptArgs? args = null
+    )
     {
         if (string.IsNullOrEmpty(methodName))
             return ExecutionResult.Failure;

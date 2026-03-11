@@ -52,7 +52,10 @@ public class AutoSwapper() : HoloScript(_info)
         ScriptServiceLocator.Get<IScriptConfigurationService>();
     private readonly IMessageBoxService _msgBoxSvc = ScriptServiceLocator.Get<IMessageBoxService>();
 
-    public override async Task<ExecutionResult> ExecuteAsync(string? methodName)
+    public override async Task<ExecutionResult> ExecuteAsync(
+        string? methodName,
+        ScriptArgs? args = null
+    )
     {
         if (string.IsNullOrEmpty(methodName))
             return ExecutionResult.Failure;

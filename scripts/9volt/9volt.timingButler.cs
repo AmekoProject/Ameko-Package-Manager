@@ -50,7 +50,10 @@ public class TimingButler() : HoloScript(_info)
     // csharpier-ignore-end
 
     /// <inheritdoc />
-    public override async Task<ExecutionResult> ExecuteAsync(string? methodName)
+    public override async Task<ExecutionResult> ExecuteAsync(
+        string? methodName,
+        ScriptArgs? args = null
+    )
     {
         switch (methodName)
         {
