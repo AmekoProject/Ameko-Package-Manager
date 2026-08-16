@@ -199,23 +199,13 @@ public class TimingButler() : HoloScript(_info)
 
         // Try snapping to the keyframe
         var delta = active.End.TotalMilliseconds - kfTime.TotalMilliseconds;
-        // Kf is earlier than the end time
-        if (delta > 0)
-        {
-            if (delta >= config.SnapEndEarlierThreshold)
-                return false;
-
-            active.End = kfTime;
-            return true;
-        }
-
-        // Kf is later than the end time
-
-        // If the keyframe is > 850ms away (and the threshold is > kf), use the event's CPS to decide what to do
+        bool earlier = delta > 0;
+        delta = Math.Abs(delta);
+        
+        // If the keyframe is > 850ms after end (and the threshold is > kf), use the event's CPS to decide what to do
         // If CPS <= 15, then add min(LeadOut, kf-500ms)
         // If CPS > 15, snap to kf
-        delta = Math.Abs(delta);
-        if (delta >= 850 && delta <= config.SnapEndLaterThreshold)
+        if (!earlier && delta >= 850 && delta <= config.SnapEndLaterThreshold)
         {
             if (active.Cps <= 15)
             {
@@ -229,11 +219,20 @@ public class TimingButler() : HoloScript(_info)
             return true;
         }
 
-        // Normal end snapping
-        if (delta >= config.SnapEndLaterThreshold)
-            return false;
+        if (earlier && delta <= config.SnapEndEarlierThreshold)
+        {
+            active.End = kfTime;
+            return true;
+        }
 
-        active.End = kfTime;
+        if (!earlier && delta <= config.SnapEndLaterThreshold)
+        {
+            active.End = kfTime;
+            return true;
+        }
+
+        // Do lead-out
+        active.End += Time.FromMillis(config.LeadOut);
         return true;
     }
 

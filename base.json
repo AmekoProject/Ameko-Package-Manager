@@ -10,7 +10,7 @@
       "QualifiedName": "9volt.timingButler",
       "Description": "A script to help with timing adjustments",
       "Author": "9volt",
-      "Version": 1.2,
+      "Version": 1.3,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [],
@@ -28,6 +28,10 @@
             "Fixed issue where events already snapped to a keyframe would get lead-in/out added",
             "Fixed issue where end time modifications wouldn't occur if start time modifications were made"
           ]
+        },
+        {
+          "Version": 1.3,
+          "Fixed": [ "Fixed issue where end lead-out would not be applied when no snapping occured" ]
         }
       ]
     },
