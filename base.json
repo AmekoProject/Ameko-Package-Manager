@@ -10,7 +10,7 @@
       "QualifiedName": "9volt.timingButler",
       "Description": "A script to help with timing adjustments",
       "Author": "9volt",
-      "Version": 1.0,
+      "Version": 1.2,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [],
@@ -21,6 +21,13 @@
         {
           "Version": 1.0,
           "Added": [ "Initial release" ]
+        },
+        {
+          "Version": 1.2,
+          "Fixed": [
+            "Fixed issue where events already snapped to a keyframe would get lead-in/out added",
+            "Fixed issue where end time modifications wouldn't occur if start time modifications were made"
+          ]
         }
       ]
     },
@@ -30,7 +37,7 @@
       "QualifiedName": "9volt.generateChapters",
       "Description": "Generate a Matroska chapters file using Significance syntax",
       "Author": "9volt",
-      "Version": 1.0,
+      "Version": 1.1,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [],
@@ -45,7 +52,7 @@
       "QualifiedName": "9volt.autoSwapper",
       "Description": "Swap the state of honorifics (*), mahjong terms (/), and verbal tics (<) in the script",
       "Author": "9volt",
-      "Version": 1.1,
+      "Version": 1.2,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [],
@@ -64,7 +71,7 @@
       "QualifiedName": "9volt.lineBreaker",
       "Description": "Easily manage the position of linebreaks",
       "Author": "9volt",
-      "Version": 1.0,
+      "Version": 1.1,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [],
@@ -78,7 +85,7 @@
       "QualifiedName": "9volt.example1",
       "Description": "An example script for testing purposes",
       "Author": "9volt",
-      "Version": 0.1,
+      "Version": 0.2,
       "IsBetaChannel": false,
       "License": "MPL-2.0",
       "Dependencies": [ "9volt.calculator" ],

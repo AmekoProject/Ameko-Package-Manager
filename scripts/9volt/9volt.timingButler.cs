@@ -101,12 +101,11 @@ public class TimingButler() : HoloScript(_info)
         }
 
         // Do timing
-        var changed =
-            DoStartTime(active, previous, mc.VideoInfo, config)
-            || DoEndTime(active, mc.VideoInfo, config);
+        var startChanged = DoStartTime(active, previous, mc.VideoInfo, config);
+        var endChanged = DoEndTime(active, mc.VideoInfo, config);
 
         // If changes happened, commit
-        if (changed)
+        if (startChanged || endChanged)
             wsp.Commit(active, ChangeType.ModifyEventMeta);
 
         return ExecutionResult.Success;
@@ -249,12 +248,12 @@ public class TimingButler() : HoloScript(_info)
         var keyframes = video.Keyframes;
         var idx = Array.BinarySearch(keyframes, frame);
         if (idx >= 0)
-            return idx;
+            return keyframes[idx];
 
         idx = ~idx;
         if (idx <= 0)
             return keyframes[0];
-        if (idx > keyframes.Length)
+        if (idx >= keyframes.Length)
             return keyframes[^1];
 
         var before = keyframes[idx - 1];
