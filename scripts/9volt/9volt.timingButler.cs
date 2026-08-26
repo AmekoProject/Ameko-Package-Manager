@@ -105,8 +105,10 @@ public class TimingButler() : HoloScript(_info)
         var endChanged = DoEndTime(active, mc.VideoInfo, config);
 
         // If changes happened, commit
-        if (startChanged || endChanged)
+        if (startChanged is Modified.ActiveLine || endChanged is Modified.ActiveLine)
             wsp.Commit(active, ChangeType.ModifyEventMeta);
+        else if (previous is not null && startChanged is Modified.Both || endChanged is Modified.Both)
+            wsp.Commit([active, previous], ChangeType.ModifyEventMeta);
 
         return ExecutionResult.Success;
     }
@@ -126,7 +128,7 @@ public class TimingButler() : HoloScript(_info)
     /// Act on the start time
     /// </summary>
     /// <returns><see langword="true"/> if a modification was made</returns>
-    private static bool DoStartTime(
+    private static Modified DoStartTime(
         Event active,
         Event? previous,
         VideoInfo video,
@@ -139,7 +141,7 @@ public class TimingButler() : HoloScript(_info)
 
         // Already on a keyframe, do nothing
         if (startFrame == nearestKf)
-            return false;
+            return Modified.None;
 
         // Try snapping to the keyframe
         var delta = active.Start.TotalMilliseconds - kfTime.TotalMilliseconds;
@@ -159,35 +161,51 @@ public class TimingButler() : HoloScript(_info)
         // Try linking with the previous event's end
         if (previous is not null)
         {
+            var prevEndFrame = video.FrameFromTime(previous.End);
+            var prevNearestKf = FindNearestKeyframeTo(prevEndFrame, video);
+
             delta = active.Start.TotalMilliseconds - previous.End.TotalMilliseconds;
-            if (Math.Abs(delta) < config.ChainThreshold)
+
+            if (prevEndFrame != prevNearestKf && Math.Abs(delta) < config.ChainThreshold)
             {
                 chain = true;
+
+                if (!snap)
+                {
+                    active.Start -= Time.FromMillis(config.LeadIn);
+                }
+
                 if (config.ChainGap == 0)
                 {
-                    active.Start = previous.End;
+                    previous.End = active.Start;
                 }
                 else
                 {
-                    var prevEndFrame = video.FrameFromTime(previous.End);
-                    active.Start = video.TimeFromFrame(prevEndFrame + config.ChainGap);
+                    var newStartFrame = video.FrameFromTime(active.Start);
+                    previous.End = video.TimeFromFrame(newStartFrame - config.ChainGap);
                 }
             }
         }
 
-        if (snap || chain)
-            return true;
-
-        // Add lead-in
-        active.Start -= Time.FromMillis(config.LeadIn);
-        return true;
+        switch (snap, chain)
+        {
+            case (true, true):
+            case (false, true):
+                return Modified.Both;
+            case (true, false):
+                return Modified.ActiveLine;
+            case (false, false):
+                // Add lead-in
+                active.Start -= Time.FromMillis(config.LeadIn);
+                return Modified.ActiveLine;
+        }
     }
 
     /// <summary>
     /// Act on the end time
     /// </summary>
     /// <returns><see langword="true"/> if a modification was made</returns>
-    private static bool DoEndTime(Event active, VideoInfo video, ButlerConfig config)
+    private static Modified DoEndTime(Event active, VideoInfo video, ButlerConfig config)
     {
         var endFrame = video.FrameFromTime(active.End);
         var nearestKf = FindNearestKeyframeTo(endFrame, video);
@@ -195,7 +213,7 @@ public class TimingButler() : HoloScript(_info)
 
         // Already on a keyframe, do nothing
         if (endFrame == nearestKf)
-            return false;
+            return Modified.None;
 
         // Try snapping to the keyframe
         var delta = active.End.TotalMilliseconds - kfTime.TotalMilliseconds;
@@ -216,24 +234,24 @@ public class TimingButler() : HoloScript(_info)
             {
                 active.End = kfTime;
             }
-            return true;
+            return Modified.ActiveLine;
         }
 
         if (earlier && delta <= config.SnapEndEarlierThreshold)
         {
             active.End = kfTime;
-            return true;
+            return Modified.ActiveLine;
         }
 
         if (!earlier && delta <= config.SnapEndLaterThreshold)
         {
             active.End = kfTime;
-            return true;
+            return Modified.ActiveLine;
         }
 
         // Do lead-out
         active.End += Time.FromMillis(config.LeadOut);
-        return true;
+        return Modified.ActiveLine;
     }
 
     /// <summary>
@@ -439,5 +457,12 @@ public class TimingButler() : HoloScript(_info)
         public int SnapEndLaterThreshold { get; init; }
         public int ChainThreshold { get; init; }
         public int ChainGap { get; init; }
+    }
+
+    private enum Modified
+    {
+        None,
+        ActiveLine,
+        Both,
     }
 }
