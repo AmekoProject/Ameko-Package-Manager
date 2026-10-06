@@ -59,7 +59,7 @@ public class LineBreaker : HoloScript
                 Submenu = "Line Breaker",
             },
         ],
-        LogDisplay = LogDisplay.Ephemeral,
+        LogDisplay = LogDisplay.OnError,
         Submenu = "Line Breaker",
         Headless = true,
     };

@@ -36,7 +36,7 @@ public class TimingButler() : HoloScript(_info)
                 Submenu = "Timing Butler",
             },
         ],
-        LogDisplay = LogDisplay.Ephemeral,
+        LogDisplay = LogDisplay.OnError,
         Submenu = null,
         Headless = true,
     };
