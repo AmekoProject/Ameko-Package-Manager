@@ -62,7 +62,7 @@ public class TimingButler() : HoloScript(_info)
             case "config":
                 return await ShowConfigDialog();
             default:
-                Logger.LogError("Unknown method {MethodName}", methodName);
+                Logger.LogError($"Unknown method {methodName}");
                 return ExecutionResult.Failure;
         }
     }
